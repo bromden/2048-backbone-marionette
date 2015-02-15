@@ -4,15 +4,43 @@ module.exports = function(grunt) {
     grunt.initConfig({
         // Склеиваем
         concat: {
-            main: {
+            all: {
                 src: [
                 	'./vendor/jquery/dist/jquery.js',
                 	'./vendor/underscore/underscore.js',
                     './vendor/backbone/backbone.js',
+                    './vendor/backbone.babysitter/lib/backbone.babysitter.js',
+                    './vendor/backbone.wreqr/lib/backbone.wreqr.js',
                     './vendor/marionette/lib/backbone.marionette.js',
-                    './app/**/*.js'  // Все JS-файлы в папке
+                    './app/components/*.js',
+                    './app/models/*.js',
+                    './app/views/*.js',
+                    './app/app.js'
                 ],
                 dest: 'scripts.js'
+            }
+        },
+
+        bower_concat: {
+            all: {
+                dest: './scripts.js',
+               
+                dependencies: {
+                  'underscore': 'jquery',
+                  'backbone': 'underscore',
+                  'marionette': 'backbone',
+                  './app/**/*.js' : 'marionette'
+                },
+                bowerOptions: {
+                  relative: false
+                }
+            }
+        },
+
+        watch: {
+            concat: {
+                files: '<%= concat.all.src %>',
+                tasks: ['concat']  // Можно несколько: ['lint', 'concat']
             }
         },
         // Сжимаем
@@ -30,7 +58,8 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-bower-concat');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
     // Задача по умолчанию
-    grunt.registerTask('default', ['concat', 'uglify']);
+    grunt.registerTask('default', ['concat', 'watch']);
 };
